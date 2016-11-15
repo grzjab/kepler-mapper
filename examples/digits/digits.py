@@ -20,19 +20,17 @@ for image_data in data:
 tooltip_s = km.np.array(tooltip_s) # need to make sure to feed it as a NumPy array, not a list
 
 # Initialize to use t-SNE with 2 components (reduces data to 2 dimensions). Also note high overlap_percentage.
-mapper = km.KeplerMapper(cluster_algorithm=km.cluster.DBSCAN(eps=0.3, min_samples=15), 
-						 reducer = km.manifold.TSNE(), nr_cubes=35, overlap_perc=0.9, 
-						 link_local=False, verbose=2)
+mapper = km.KeplerMapper( verbose=2)
 
 # Fit and transform data
-data = mapper.fit_transform(data)
+data = mapper.fit_transform(data, projection = km.manifold.TSNE())
 
 # Create the graph
-complex = mapper.map(data, dimension_index=[0,1], dimension_name="t-SNE(2) 2D")
+complex = mapper.map(data, nr_cubes=20, overlap_perc=0.9, clusterer=km.cluster.DBSCAN(eps=0.3, min_samples=15), )
 
 # Create the visualizations (increased the graph_gravity for a tighter graph-look.)
 
 # Tooltips with image data for every cluster member
-mapper.visualize(complex, "keplermapper_digits_custom_tooltips.html", "Digits", graph_gravity=0.25, custom_tooltips=tooltip_s)
+mapper.visualize(complex, path_html="keplermapper_digits_custom_tooltips.html", title="Digits", graph_gravity=0.25, custom_tooltips=tooltip_s)
 # Tooltips with the target y-labels for every cluster member
-mapper.visualize(complex, "keplermapper_digits_ylabel_tooltips.html", "Digits", graph_gravity=0.25, custom_tooltips=labels)
+mapper.visualize(complex, path_html="keplermapper_digits_ylabel_tooltips.html", title="Digits", graph_gravity=0.25, custom_tooltips=labels)
