@@ -137,7 +137,7 @@ class KeplerMapper(object):
     
     if self.verbose > 0:
       print("Mapping on data shaped %s using dimensions\n"%(str(projected_X.shape)))
-    
+
     # If inverse image is not provided, we use the projection as the inverse image (suffer projection loss)
     if inverse_X is None:
       inverse_X = projected_X
@@ -162,7 +162,7 @@ class KeplerMapper(object):
 
     # Subdivide the projected data X in intervals/hypercubes with overlap
     if self.verbose > 0:
-      total_cubes = len(cube_coordinates_all(nr_cubes,projected_X.shape[1]))
+      total_cubes = len(cube_coordinates_all(nr_cubes,di.shape[0]))
       print("Creating %s hypercubes."%total_cubes)
 
     for i, coor in enumerate(cube_coordinates_all(nr_cubes,di.shape[0])):
@@ -171,8 +171,8 @@ class KeplerMapper(object):
           (projected_X[:,di+1] < self.d[di] + (coor * self.chunk_dist[di]) + self.chunk_dist[di] + self.overlap_dist[di]) == False, axis=1 )) ]
       
       if self.verbose > 1:
-        print("There are %s points in cube_%s / %s with starting range %s"%
-              (hypercube.shape[0],i,total_cubes,self.d[di] + (coor * self.chunk_dist[di])))
+        print("There are %s points in cube_%s / %s with range %s, %s"%
+              (hypercube.shape[0],i,total_cubes,self.d[di] + (coor * self.chunk_dist[di]), self.d[di] + (coor * self.chunk_dist[di]) + self.chunk_dist[di] + self.overlap_dist[di]))
       
       # If at least one sample inside the hypercube
       if hypercube.shape[0] > 0:
