@@ -1,14 +1,17 @@
 import km
+from mst_clustering import MSTClustering
 
-data = km.np.genfromtxt('cat-reference.csv',delimiter=',')
+data = km.np.genfromtxt('examples/cat/cat-reference.csv',delimiter=',')
 
-mapper = km.KeplerMapper(cluster_algorithm=km.cluster.DBSCAN(eps=0.1, min_samples=5), nr_cubes=10, overlap_perc=0.8, verbose=1)
+mapper = km.KeplerMapper( verbose=2)
 
-mapper.fit(data)
+projected_data = mapper.fit_transform(data, projection = [1] )
 
-complex = mapper.map(data, dimension_index=1, dimension_name="Y-axis")
+# Create the graph
+complex = mapper.map(projected_data, data, nr_cubes=10, overlap_perc=0.7, clusterer = MSTClustering(cutoff_scale=0.025)) #clusterer=km.cluster.DBSCAN(eps=0.1, min_samples=5), )
 
-mapper.visualize(complex, "cat_keplermapper_output.html", "cat-reference.csv")
+# Tooltips with the target y-labels for every cluster member
+mapper.visualize(complex, path_html="keplermapper_cat_ylabel_tooltips.html", title="Cat", graph_gravity=0.05)
 
 # You may want to visualize the original point cloud data in 3D scatter too
 """
